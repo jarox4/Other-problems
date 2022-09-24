@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _12
+{
+    internal class Program
+    {
+        static void Main()
+        {
+            int[] days = new int[] {2,4,6,8,10,12,14};
+            Console.WriteLine(someFn(days));
+            Console.ReadLine();
+        }
+        public static int someFn(int [] a)
+        {
+            tickets ticketNo1 = new tickets(2,1);
+            tickets ticketNo2 = new tickets(7,7);
+            tickets ticketNo3 = new tickets(25,30);
+            List<candidate> resultCandidates = new List<candidate>();
+            for (int i = 0; i < a.Length; i++) 
+            {
+                //checking if previous candidate's duration hasn't expired yet
+                try
+                {
+                    if (resultCandidates[resultCandidates.Count - 1].time >= a[i])
+                    {
+                        continue;
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+                    //making candidates
+                    #region
+                    candidate candidateNo1;
+                    {
+                        int time = a[i] / ticketNo1.time;
+                        candidateNo1 = new candidate(ticketNo1.price * time, ticketNo1.time * time);
+                    }
+                    candidate candidateNo2;
+                    {
+                        int time = (int)Math.Ceiling((double)((float)a[i] / ticketNo2.time));
+                        candidateNo2 = new candidate(ticketNo2.price * time, ticketNo2.time * time);
+                    }
+                    candidate candidateNo3;
+                    {
+                        int time = (int)Math.Ceiling((double)((float)a[i] / ticketNo3.time));
+                        candidateNo3 = new candidate(ticketNo3.price * time, ticketNo3.time * time);
+                    }
+                    #endregion
+                    //chosing the best candidate
+                    #region
+                    if (candidateNo1.price > candidateNo2.price && candidateNo3.price > candidateNo2.price)
+                    {
+                        resultCandidates.Add(candidateNo2);
+                    }
+                    else if (candidateNo1.price < candidateNo2.price && candidateNo1.price < candidateNo3.price)
+                    {
+                        resultCandidates.Add(candidateNo1);
+                    }
+                    else if (candidateNo3.price < candidateNo1.price && candidateNo3.price < candidateNo2.price)
+                    {
+                        resultCandidates.Add(candidateNo3);
+                    #endregion
+                }
+            }
+            int sum = 0;
+            foreach (var item in resultCandidates) 
+            {
+                sum += item.price;
+            }
+            return sum;
+        }
+        public static void outputAllListContent(List<string> a)
+        {
+            for (int i = 0; i < a.Count; i++)
+            {
+                Console.WriteLine($"Element - {i}: ");
+                Console.WriteLine(a[i]);
+            }
+        }
+    }
+    class tickets 
+    {
+        public tickets(int valuePrice, int valueTime) 
+        {
+            price = valuePrice;
+            time = valueTime;
+        }
+        public int price;
+        public int time;
+    }
+    class candidate 
+    {
+        public candidate(int valuePrice, int valueTime) 
+        {
+            price = valuePrice;
+            time = valueTime;
+        }
+        public int price;
+        public int time;
+    }
+}
