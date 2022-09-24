@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _12
+{
+    internal class Program
+    {
+        static void Main()
+        {
+            int[] days = new int[] {2,4,6,8,10,12,14};
+            Console.WriteLine(someFn(days));
+            Console.ReadLine();
+        }
+        public static int someFn(int [] days)
+        {
+            int lastDay = days.Last();
+
+            Ticket ticket1 = new Ticket(2,1);
+            Ticket ticket2 = new Ticket(7,7);
+            Ticket ticket3 = new Ticket(25,30);
+
+            List<Candidate> candidates = new List<Candidate>();
+            candidates.Add(new Candidate(ticket1));
+            candidates.Add(new Candidate(ticket2));
+            while (candidates.Count(candidate => candidate.time >= lastDay) != candidates.Count) 
+            {
+                for (int i = 0; i < candidates.Count; i++) 
+                {
+                    if (candidates[i].time < lastDay)
+                    {
+                        Candidate newCandidate = (Candidate)candidates[i].Clone();
+                        candidates[i] += ticket1;
+                        newCandidate += ticket2;
+                        candidates.Add(newCandidate);
+                    }
+                    else 
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            candidates.Add(new Candidate(25,30));
+            int bestPrice = candidates[0].price;
+            foreach (var candidate in candidates) 
+            {
+                if (candidate.price < bestPrice) 
+                {
+                    bestPrice = candidate.price;
+                }
+            }
+            return bestPrice;
+        }
+    }
+    class Ticket 
+    {
+        public static Ticket operator +(Ticket left, Ticket right) 
+        {
+            return new Ticket(left.price + right.price, left.time + right.time);
+        }
+        public Ticket(int valuePrice, int valueTime) 
+        {
+            price = valuePrice;
+            time = valueTime;
+        }
+        public int price;
+        public int time;
+    }
+    class Candidate: ICloneable
+    {
+        public static Candidate operator +(Candidate candidate, Ticket ticket) 
+        {
+            return new Candidate(candidate.price + ticket.price, candidate.time + ticket.time);
+        }
+        public object Clone() 
+        {
+            return this.MemberwiseClone();
+        }
+        public Candidate()
+        {
+            price = 0;
+            time = 0;
+        }
+        public Candidate(Ticket ticket) 
+        {
+            price = ticket.price;
+            time = ticket.time;
+        }
+        public Candidate(int valuePrice, int valueTime) 
+        {
+            price = valuePrice;
+            time = valueTime;
+        }
+        public int price;
+        public int time;
+    }
